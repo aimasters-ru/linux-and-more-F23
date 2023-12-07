@@ -1,0 +1,13 @@
+version: '3'
+services:
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /home/ubuntu/docker-ssl/nginx.conf:/etc/nginx/nginx.conf:ro
+  webservice:
+    image: nginx
+

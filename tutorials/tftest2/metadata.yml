@@ -1,0 +1,28 @@
+#cloud-config
+users:
+  - name: ubuntu
+    groups: sudo
+    shell: /bin/bash
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDllwCV3nZiTclRiNO0CUQ5JU4Yrm6VLVFJSlsYAXBjts2RHCaAuJ5fvXv/6h/XJT07n9sBrid4uBl+z1pCrhZ2ql6tH/NUskNDVYZfl//rep0TfSF90sXbVgVUgCrgMwABrgs5NOy2ltcoOvF/Znlyg5d69xaZiHSVcNVp6gCkd4egC2MbJZgqDJEBt9iX8nw/sjcjFq7RuokBscZVMWmC7oMsBGEq4IT8WUnFA4jLep0Myf6hso0CGI2SE/DLM0iguBzfZIKJTEiobea1pvVC3VbBt/ONNaq7uuemd7Wm5ZJ9WRhAHBSc/nVANxyVwMZE5QdUeRQJHysgcarTrxM9
+#      - ssh-rsa AAAAB3Nza......Pu00jRN user@desktop
+runcmd:
+ - [ ls, -l, / ]
+ - [ sh, -xc, "echo $(date) ': hello world!'" ]
+ - [ sh, -c, echo "=========hello world'=========" ]
+ - ls -l /root
+ # Note: Don't write files to /tmp from cloud-init use /run/somedir instead.
+ # Early boot environments can race systemd-tmpfiles-clean LP: #1707222.
+# - mkdir /run/mydir
+# - [ wget, "http://slashdot.org", -O, /run/mydir/index.html ]
+ - sudo apt-get update
+ - sudo apt-get install ca-certificates curl gnupg
+ - sudo install -m 0755 -d /etc/apt/keyrings
+ - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+ - sudo chmod a+r /etc/apt/keyrings/docker.gpg
+ - echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+ - sudo apt-get update
+ - sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+ - sudo groupadd docker
+ - sudo usermod -aG docker ubuntu
